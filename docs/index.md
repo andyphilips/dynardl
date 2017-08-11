@@ -5,7 +5,7 @@ Stata module to dynamically simulate autoregressive distributed lag (ARDL) model
 You can download the most recent version of `dynardl` from the project site [here](https://github.com/andyphilips/dynardl/archive/master.zip). This program is part of a suite that also includes `pssbounds` (Jordan and Philips 2017), a Stata module to display the necessary critical values to conduct the Pesaran, Shin and Smith (2001) bounds test for cointegration.
 
 ### Version
-Current version: 1.0.3. Note that a previous version of this program was called `dynpss`.
+Current version: 1.0.3. Note that a previous version of this program was called `dynpss`. `dynardl` provides a more flexible lag specification and adds additional plots.
 
 ### Table of Contents
  * [Description](#description)
@@ -32,6 +32,8 @@ Narayan, Paresh Kumar. 2005. "The Saving and Investment Nexus for China: Evidenc
 Pesaran, M Hashem, Yongcheol Shin and Richard J Smith. 2001. "Bounds testing approaches to the analysis of level relationships." Journal of Applied Econometrics 16(3):289-326.
 
 ### Examples<a id="examples"></a>
+
+See the working paper for examples of `dynardl` in action.
 
 ### Example Papers<a id="example-papers"></a>
 Use `dynardl` in one of your papers? Let me know (andrew.philips [AT] colorado.edu) and I will add it to the list below:
