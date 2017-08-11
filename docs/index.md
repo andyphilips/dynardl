@@ -16,14 +16,7 @@ Current version: 1.0.3. Note that a previous version of this program was called 
  * [Example Papers](#example-papers)
  
 ### Description<a id="description"></a>
-`dynardl` is a program to produce dynamic simulations of autoregressive distributed lag models (ARDL) of the sort recommended by Pesaran, Shin, and Smith (2001). See Philips (2017) for a discussion of this approach, and [Jordan and Philips](files/pss_Stata_2017.pdf) (2017) for an in-depth discussion of this program.
-
-[test1](https://github.com/andyphilips/dynardl/blob/master/files/pss_Stata_2017.pdf)
-[test2](dynardl/files/pss_Stata_2017.pdf)
-[tes3](https://github.com/andyphilips/dynardl/raw/master/files/pss_Stata_2017.pdf)
-
-
-
+`dynardl` is a program to produce dynamic simulations of autoregressive distributed lag models (ARDL) of the sort recommended by Pesaran, Shin, and Smith (2001). See Philips (2017) for a discussion of this approach, and [Jordan and Philips](https://github.com/andyphilips/dynardl/raw/master/files/pss_Stata_2017.pdf) (2017) for an in-depth discussion of this program.
 
 `dynardl` is designed to dynamically simulate the effects of a counterfactual change in one weakly exogenous regressor at a point in time, using stochastic simulation techniques. Since the ARDL procedure can produce models that are complicated to interpret, `dynardl` is designed to ease the burden of substantive interpretations through the creation of predicted (or expected) values of the dependent variable (along with associated confidence intervals), which can be plotted to show how a change in one variable "flows" through the model over time. `dynardl` takes 1000 (or however many simulations a user desires) draws of the set of parameters from a multivariate normal distribution, using the estimated parameters and the variance-covariance matrix from the linear regression. All covariates are set to certain values (typically means), which are used to create predicted Y-hat values plus stochastic uncertainty.
 
@@ -31,7 +24,7 @@ Current version: 1.0.3. Note that a previous version of this program was called 
 ### Reference<a id="reference"></a>
 If you use `dynardl`, please cite:
 
-Jordan, Soren and Andrew Q. Philips. 2017 "[Cointegration testing and dynamic simulations of autoregressive distributed lag models](https://github.com/andyphilips/dynardl/raw/master/pss%20Stata%202017.pdf)". Working Paper.
+Jordan, Soren and Andrew Q. Philips. 2017 "[Cointegration testing and dynamic simulations of autoregressive distributed lag models](https://github.com/andyphilips/dynardl/raw/master/files/pss_Stata_2017.pdf)". Working Paper.
 
 and
 
@@ -49,7 +42,7 @@ Pesaran, M Hashem, Yongcheol Shin and Richard J Smith. 2001. "Bounds testing app
 
 ### Examples<a id="examples"></a>
 
-See the [working paper](https://github.com/andyphilips/dynardl/raw/master/pss%20Stata%202017.pdf) for examples of `dynardl` in action.
+See the [working paper](https://github.com/andyphilips/dynardl/raw/master/files/pss_Stata_2017.pdf) for examples of `dynardl` in action.
 
 ### Example Papers<a id="example-papers"></a>
 Use `dynardl` in one of your papers? Let me know (andrew.philips [AT] colorado.edu) and I will add it to the list below:
