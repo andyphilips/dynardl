@@ -1,5 +1,5 @@
 {smcl}
-{* *! version 1.0.3  06jul2017}{...}
+{* *! version 1.0.4  14sept2017}{...}
 {findalias asfradohelp}{...}
 {vieweralsosee "" "--"}{...}
 {vieweralsosee "[R] help" "help help"}{...}
@@ -31,16 +31,18 @@
 {synoptline}
 {syntab:Required options}
 
-{synopt:{opth lags(numlist)}}numeric list of the number of lags to include for each variable{p_end}
+{synopt:{opth l:ags(numlist)}}numeric list of the number of lags to include for each variable{p_end}
 {synopt:{opth shockvar(varname)}}a single independent variable from {indepvars} that is to be shocked {p_end}
 {synopt:{opth shockval(#)}}amount to shock {cmd:shockvar({varname})} by{p_end}
 
 {syntab:Additional options}
 
-{synopt:{opth diffs(numlist)}}numeric list of the number of contemporaneous first differences to include for each variable{p_end}
-{synopt:{opth lagdiffs(numlist)}}numeric list of the number of lagged first differences to include for each variable{p_end}
+{synopt:{opth d:iffs(numlist)}}numeric list of the number of contemporaneous first differences to include for each variable{p_end}
+{synopt:{opth lagd:iffs(numlist)}}numeric list of the number of lagged first differences to include for each variable{p_end}
 {synopt:{opth level(numlist)}}numeric list of variables to appear in levels{p_end}
 {synopt:{opt ec}}if specified, {depvar} will be estimated in first differences{p_end}
+{synopt:{opt trend}}add a deterministic linear trend{p_end}
+{synopt:{opt nocon:stant}}suppress the constant{p_end}
 {synopt:{opth range(#)}}length of scenario to simulate (default is 20){p_end}
 {synopt:{opth sig(#)}}significance level for confidence intervals  (default is 95%){p_end}
 {synopt:{opth t:ime(#)}}scenario time in which the shock occurs (default is 10){p_end}
@@ -58,7 +60,7 @@
 {title:Description}
 
 {pstd}
-{cmd:dynardl} is a program to produce dynamic simulations of autoregressive distributed lag models (ARDL) of the sort recommended by Pesaran, Shin, and Smith (2001). See Philips (2017) for a discussion of this approach, and Jordan and Philips (2017) for an in-depth discussion of this program.
+{cmd:dynardl} is a program to produce dynamic simulations of autoregressive distributed lag models (ARDL). See Philips (2017) for a discussion of this approach, especially in regards to the error-correction ARDL of Pesaran, Shin, and Smith (2001), and see Jordan and Philips (2017) for an in-depth discussion of this program.
 
 {pstd}
 Users can find and download the most up-to-date version of {cmd:dynardl} at:
@@ -96,6 +98,12 @@ is the amount to shock {cmd:shockvar(varname)} by. Most commonly, a +/- one stan
 
 {phang}
 {opt ec} if specified, {depvar} will be estimated in first differences. If estimating an error correction model, users will need to use this option.
+
+{phang}
+{opt trend} if specified, the program will estimate the regression model with a deterministic linear trend.
+
+{phang}
+{opt noconstant} if specified, the constant will be suppressed.
 
 {phang}
 {opth range(#)} is the length of scenario to simulate. By default, this is t=20. {cmd:range( )} must always be larger than {cmd:time( )}.
@@ -196,5 +204,5 @@ and:
 {marker version}{...}
 {title:Version}
 
-version 1.0.3, July 06, 2017.
+version 1.0.4, Sept 14, 2017.
 

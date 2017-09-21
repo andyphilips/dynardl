@@ -5,7 +5,7 @@ Stata module to dynamically simulate autoregressive distributed lag (ARDL) model
 You can download the most recent version of `dynardl` from the project site [here](https://github.com/andyphilips/dynardl/archive/master.zip). This program is part of a suite that also includes `pssbounds` (Jordan and Philips 2017), a Stata module to display the necessary critical values to conduct the Pesaran, Shin and Smith (2001) bounds test for cointegration.
 
 ### Version
-Current version: 1.0.3. Note that a previous version of this program was called `dynpss`. `dynardl` provides a more flexible lag specification and adds additional plots.
+Current version: 1.0.4. Note that a previous version of this program was called `dynpss`. `dynardl` provides a more flexible lag specification and adds additional plots.
 
 ### Table of Contents
  * [Description](#description)

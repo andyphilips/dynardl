@@ -1,23 +1,25 @@
 *
 *		PROGRAM DYNARDL
 *		
-*		version 1.0.3
-*		7/06/17
+*		version 1.0.4
+*		9/14/17
 *		Andrew Q. Philips
 *		Soren Jordan
 *
 *		Note: previous versions of this program were titled dynpss
 *
+*		TODO:
+*			-Start to perform matrix operations in mata for speed
 * -------------------------------------------------------------------------
 * -------------------------------------------------------------------------
 * -------------------------------------------------------------------------
 
 capture program drop dynardl
-capture program define dynardl , rclass
-syntax [varlist] [if] [in], [lags(string) diffs(string) lagdiffs(string) ///
+capture program define dynardl , eclass
+syntax [varlist] [if] [in], [Lags(string) Diffs(string) LAGDiffs(string) ///
 level(string) forceset(string)  Time(numlist integer > 1) shockval(numlist)  ///
-shockvar(varname) range(numlist integer > 1) saving(string) 			 ///
-sig(numlist integer < 100) ec  			 ///
+shockvar(varname) range(numlist integer > 1) SAVing(string) 			 ///
+sig(numlist integer < 100) ec NOCONstant TRend			 ///
 burnin(numlist integer > 1) sims(numlist) graph rarea change expectedval]
 
 version 8
@@ -92,7 +94,7 @@ else	{
 }
 
 * ----------------- Generate L and D as needed ----------------------------- *
-loc ldvs ""						// lagged DVs
+loc ldvs ""						// lagged DVs 
 loc lnumdvs ""					// vector of dv lag lengths
 loc lddvs ""					// lagged-diff DVs
 loc ldnumdvs ""					// vector of ld DV lag lengths
@@ -260,15 +262,66 @@ if "`level'" != "" & "`ec'" != ""	{	// issue warning
 	di in y "Option ec specified with variables appearing in levels; are you sure you want this?"
 }
 
+if "`trend'" != "" {						// linear time trend desired?
+	gen Trend = _n
+	loc trend "Trend"
+	di in y "Deterministic linear trend specified"
+} 
+if "`noconstant'" != "" {					// suppress constant?
+	loc nocon ", noconstant"
+	di in y "Suppress constant specified"
+}
+
 * ----------------- Estimate Model ----------------------------- *
 * ARDL:
 if "`ec'" == ""	{
-	regress `varname_1' `ldvs' `lddvs' `dsiv' `lsiv' `ldsiv' `siv' `ivset' `divset' `livset' `ldivset'
+	regress `varname_1' `ldvs' `lddvs' `dsiv' `lsiv' `ldsiv' `siv' `ivset' `divset' `livset' `ldivset' `trend' `nocon'
 }
 * ECM:
 else	{
-	regress d`varname_1' `ldvs' `lddvs' `dsiv' `lsiv' `ldsiv' `siv' `ivset' `divset' `livset' `ldivset'
+	regress d`varname_1' `ldvs' `lddvs' `dsiv' `lsiv' `ldsiv' `siv' `ivset' `divset' `livset' `ldivset' `trend' `nocon'
 }
+
+
+* ----------------- Store Values for pssbounds ----------------- *
+* keep existing regress ereturns for things like wald tests if ecm. 
+* TYPE:
+if "`ec'" != "" {
+	if "`trend'" != ""	{
+		if "`noconstant'" != "" {
+			ereturn scalar type = 0			// no crit values available.
+		}
+		else {
+			ereturn scalar type = 5			// unrestricted intercept and trend
+		}
+	}
+	else {
+		if "`noconstant'" != "" {
+			ereturn scalar type = 1			// no intercept or trend
+		}
+		else {
+			ereturn scalar type = 3			// unrestricted intercept, no trend
+		}
+	}
+* lag list (needed for k and f-test)
+foreach var of varlist `ldvs' {
+	if substr("`var'",1,2) == "L1" {	
+		local lag1list "`var'"
+		ereturn scalar ldv_t = _b[`var']/_se[`var']		// tstat on LDV
+	}
+}
+loc k 
+foreach var of varlist `lsiv' `livset' {
+	if substr("`var'",1,2) == "L1" {				// is it in coint. eq?
+		local lag1list "`lag1list' `var'"
+		loc k = `k' + 1								// no. of vars
+	}
+}
+ereturn local laglist `lag1list'	// vector of l.y + l.x1 + l.x2...
+ereturn scalar k = `k'		// # of indep vars appearing in lagged levels	
+ereturn local cmd dynardl
+}
+
 
 * ----------------- Obtain Means and Things for Below -------------------- *
 mat B = e(b)								// grab betas
@@ -282,7 +335,13 @@ scalar length = e(rank)						// rank of matrix (needed for creating length of se
 if "`forceset'" !=  ""	{
 	loc i = 1
 	qui foreach var in `varlist'	{
-		loc fs : word `i' of `forceset'	
+		loc fs : word `i' of `forceset'
+			if "`i'" == "1" {
+				if "`fs'" != "." {
+					di in r _n "Lagged DV cannot be forceset. Set to '.'"
+					exit 198
+				}
+			}
 			if "`fs'" != "."	{
 				scalar _`var'_mean = `fs'
 			}
@@ -301,24 +360,36 @@ else	{									// if not, will just use means
 }
 
 * ----------------- Create Posterior Draws ------------------------------- *
-* draw posterior betas (and constant)
-qui drawnorm `ldvs' `lddvs' `dsiv' `lsiv' `ldsiv' `siv' `ivset' `divset' `livset' `ldivset' const , n(`simulations') cov(V) means(B) clear
-* place vars in posterior beta's (PB) matrix:
-mkmat `ldvs' `lddvs' `dsiv' `lsiv' `ldsiv' `siv' `ivset' `divset' `livset' `ldivset' const, matrix(PB)
+* draw posterior betas (and constant if applicable)
+if "`noconstant'" != "" {
+	qui drawnorm `ldvs' `lddvs' `dsiv' `lsiv' `ldsiv' `siv' `ivset' `divset' `livset' `ldivset' `trend' , n(`simulations') cov(V) means(B) clear
+	* place vars in posterior beta's (PB) matrix:
+	mkmat `ldvs' `lddvs' `dsiv' `lsiv' `ldsiv' `siv' `ivset' `divset' `livset' `ldivset' `trend' , matrix(PB)
+}
+else {
+	qui drawnorm `ldvs' `lddvs' `dsiv' `lsiv' `ldsiv' `siv' `ivset' `divset' `livset' `ldivset' `trend' const , n(`simulations') cov(V) means(B) clear
+	* place vars in posterior beta's (PB) matrix:
+	mkmat `ldvs' `lddvs' `dsiv' `lsiv' `ldsiv' `siv' `ivset' `divset' `livset' `ldivset' `trend' const, matrix(PB)
+}
 * draw sigma-squared from inv chi-2 to constrain to [0-1]:
 tempvar Sigma2
 qui gen `Sigma2' = sigma2*(dfsig)/invchi2(dfsig,uniform()) 
 
 * ----------------- Values at t = 1 ------------------------------- *
-mat set = J(length,1,.)			// container (incl. constant) to hold set values  
+mat set = J(length,1,.)			// container to hold set values  
 * parsing routine that moves through regression varlist (and set), 
 * splitting out the name and leaving the d, l1, etc., and replaces set
 * with their sample mean if L, and 0 if L*D or D.
 loc i 1
-* lagged DV's always set to sample means:
+* lagged DV's always set to sample means, unless constant suppressed:
 foreach var in `ldvs' {
 	gettoken dynamics name: var, parse("_")
-	mat set[`i',1] = `name'_mean
+	if "`noconstant'" != "" {	// if noconstant, set to 0
+		mat set[`i',1] = 0
+	}
+	else {
+		mat set[`i',1] = `name'_mean
+	}
 	loc i = `i' + 1 
 }
 * lagged diff DV's set to 0
@@ -365,8 +436,19 @@ foreach var in `ldivset' {
 	loc i = `i' + 1 
 }
 
+* trend (if present) set to -burnin so trend is t=0 at t=0
+foreach var in `trend' {
+	mat set[`i',1] = -`burnin'
+	loc i = `i' + 1
+}
+
 * constant
-mat set[`i',1] = 1
+if "`noconstant'" != "" {
+}
+else {
+	mat set[`i',1] = 1
+}
+
 
 * Create predicted values ----------------- 
 * multiply [s x k] posterior beta matrix by [k x 1] set matrix
@@ -444,6 +526,7 @@ qui forv p = 2/`brange'	{
 		}
 		loc row = `row' + 1
 	}
+
 	
 	* if t = shocktime	-----------------------------
 	if `p' == `btime'	{
@@ -500,6 +583,18 @@ qui forv p = 2/`brange'	{
 	else	{					// if t < shocktime...nothing happens	
 	}
 	
+	* set trend to t+1, if it exists
+	foreach var in `trend' {
+		* if no constant, trend = rowsof(set)
+		if "`noconstant'" != "" {
+			scalar f = rowsof(set)
+		}
+		else {	// if not it's 1 less than row total
+			scalar f = rowsof(set) - 1
+		}
+		mat set[f,1] = `p' - `burnin'  // trend = sim time - burnin time
+	}
+
 	* create Y = XB + E -----------------------------
 	mat `PV' = PB*set
 	capture drop `PV'	
@@ -660,6 +755,7 @@ if "`graph'" != ""	{
 		}
 	}
 }											// close graph
+
 
 restore										// restore user data
 end
