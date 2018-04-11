@@ -16,7 +16,7 @@ Current version: 1.0.4. Note that a previous version of this program was called 
  * [Example Papers](#example-papers)
  
 ### Description<a id="description"></a>
-`dynardl` is a program to produce dynamic simulations of autoregressive distributed lag models (ARDL) of the sort recommended by Pesaran, Shin, and Smith (2001). See Philips (2017) for a discussion of this approach, and [Jordan and Philips](https://github.com/andyphilips/dynardl/raw/master/files/pss_Stata_2017.pdf) (2017) for an in-depth discussion of this program.
+`dynardl` is a program to produce dynamic simulations of autoregressive distributed lag models (ARDL) of the sort recommended by Pesaran, Shin, and Smith (2001). See Philips (2018) for a discussion of this approach, and [Jordan and Philips](https://github.com/andyphilips/dynardl/raw/master/files/pss_Stata_2017.pdf) (2017) for an in-depth discussion of this program.
 
 `dynardl` is designed to dynamically simulate the effects of a counterfactual change in one weakly exogenous regressor at a point in time, using stochastic simulation techniques. Since the ARDL procedure can produce models that are complicated to interpret, `dynardl` is designed to ease the burden of substantive interpretations through the creation of predicted (or expected) values of the dependent variable (along with associated confidence intervals), which can be plotted to show how a change in one variable "flows" through the model over time. `dynardl` takes 1000 (or however many simulations a user desires) draws of the set of parameters from a multivariate normal distribution, using the estimated parameters and the variance-covariance matrix from the linear regression. All covariates are set to certain values (typically means), which are used to create predicted Y-hat values plus stochastic uncertainty.
 
@@ -28,11 +28,11 @@ Jordan, Soren and Andrew Q. Philips. 2017 "[Cointegration testing and dynamic si
 
 and
 
-Philips, Andrew Q. 2017. "[Have your cake and eat it too? Cointegration and dynamic inference from autoregressive distributed lag models](http://dx.doi.org/10.1111/ajps.12318)." American Journal of Political Science.
+Philips, Andrew Q. 2018. "[Have your cake and eat it too? Cointegration and dynamic inference from autoregressive distributed lag models](http://dx.doi.org/10.1111/ajps.12318)." American Journal of Political Science: 62(1): 230-244.
 
 ### Authors<a id="authors"></a>
 
-[Andrew Q. Philips](http://www.andyphilips.com), Department of Political Science, University of Colorado at Boulder. andrew.philips [AT] colorado.edu. @andyphilips
+[Andrew Q. Philips](http://www.andyphilips.com), Department of Political Science, University of Colorado Boulder. andrew.philips [AT] colorado.edu. @andyphilips
 
 [Soren Jordan](http://sorenjordan.com), Department of Political Science, Auburn University. sorenjordanpols [AT] gmail.com.
 
